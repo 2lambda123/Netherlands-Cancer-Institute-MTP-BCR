@@ -16,7 +16,7 @@ def risk_dataloador(
     # Data Aug
     # 1 Resized or Random Resized Crop (check)
     Resized = transforms.Resize(args.img_size)
-    RandomResizedCrop = transforms.RandomResizedCrop(args.img_size, scale=(0.5, 1.))
+    # RandomResizedCrop = transforms.RandomResizedCrop(args.img_size, scale=(0.5, 1.))
     # 2 Random Horizontal Flip
     RandomHorizontalFlip = transforms.RandomHorizontalFlip(p=0.5)
     # 3 Random Vertical Flip
@@ -66,18 +66,6 @@ def risk_dataloador(
         transforms.ToTensor(),
         transforms.Normalize([0.5], [0.5])
     ])
-    # # data prepare
-    # test_transform = transforms.Compose(
-    #     [transforms.Resize(args.img_size),
-    #      transforms.ToTensor(),
-    #      transforms.Normalize([0.5, ], [0.5, ])])
-    #
-    # train_transform = transforms.Compose(
-    #     [transforms.Resize(args.img_size),
-    #      transforms.RandomHorizontalFlip(p=0.5),
-    #      transforms.RandomVerticalFlip(p=0.5),
-    #      transforms.ToTensor(),
-    #      transforms.Normalize([0.5, ], [0.5, ])])
 
     if train_transform_method:
         transform = train_transform

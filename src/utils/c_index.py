@@ -1,6 +1,4 @@
-## Adapted from: https://raw.githubusercontent.com/CamDavidsonPilon/lifelines/master/lifelines/utils/concordance.py
-## Modified to weight by ipcw (inverse probality of censor weight) to fit Uno's C-index
-## Modified to use a time-dependent score
+## Modified from: (https://github.com/yala/Mirai/blob/master/onconet/utils/c_index.py)
 
 import numpy as np
 from lifelines.utils.btree import _BTree

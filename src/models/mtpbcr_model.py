@@ -12,11 +12,7 @@ class ModelBase(nn.Module):
         # create base encoder
         print("=> creating model '{}'".format(arch))
         resnet_arch = getattr(resnet, arch)
-        if from_imagenet:
-            # model = models.__dict__[args.arch](pretrained=True)
-            net = resnet_arch(pretrained=True)
-
-        # net = ModelBase_(args)
+        net = resnet_arch(pretrained=from_imagenet)
 
         self.model = []
         for name, module in net.named_children():
@@ -32,7 +28,6 @@ class ModelBase(nn.Module):
 
     def forward(self, x):
         x = self.model(x)
-        # note: not normalized here
         return x
 
 
@@ -261,10 +256,7 @@ class exam_fc(nn.Module):
 
 
 class MTP_BCR_Model(nn.Module):
-    def __init__(self, args,
-                 # num_classes, projection_dim, num_heads,
-                 # feedforward_dim, drop_transformer, drop_cpe, pooling, image_shape=(7, 7)
-                 ):
+    def __init__(self, args,):
         super().__init__()
 
         self.num_classes = args.num_classes
@@ -310,7 +302,6 @@ class MTP_BCR_Model(nn.Module):
             final_input_feature_dim = (feature_dim * 5) + (self.projection_dim * 4)
 
         final_output_feature_dim = feature_dim + self.projection_dim
-
 
         self.cc_mlo_mlp = nn.Sequential(
             nn.Linear(cc_mlo_mlp_input_feature_dim, feature_dim),

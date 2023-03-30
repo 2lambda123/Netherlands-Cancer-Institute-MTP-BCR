@@ -77,7 +77,7 @@ def label_filter_220609(label, lens, batchsize):
     return label
 
 
-def compute_right_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age_criterion):
+def compute_right_side_loss_tumor(args, pred, m_label, lens, ce_criterion, l1_criterion):
     # print('compute_right_side_loss')
     # print('pred', pred)
 
@@ -91,10 +91,10 @@ def compute_right_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age
     history_label = label_filter_220609(
         m_label['history_r'], lens, args.batch_size).long().cuda()
     # print('risk_loss')
-    # risk_loss = risk_criterion(risk, risks_r_label) * 0.5
+    # risk_loss = ce_criterion(risk, risks_r_label) * 0.5
     risk_loss = get_risk_loss_BCE(risk, risks_r_label, years_last_followup) * 0.5
     # print('history_loss')
-    history_loss = risk_criterion(history, history_label) * 0.2
+    history_loss = ce_criterion(history, history_label) * 0.2
     loss = risk_loss + history_loss
 
     if args.use_risk_factors:
@@ -139,34 +139,34 @@ def compute_right_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age
             m_label['previous_cancer_Her2_right'], lens, args.batch_size).long().cuda()
 
         # print('location_next_loss')
-        location_next_loss = risk_criterion(location_next, next_cancer_location_label) * 0.2
+        location_next_loss = ce_criterion(location_next, next_cancer_location_label) * 0.2
         # print('location_before_loss')
-        location_before_loss = risk_criterion(location_before, previous_cancer_location_label) * 0.2
+        location_before_loss = ce_criterion(location_before, previous_cancer_location_label) * 0.2
         # print('type_before_loss')
-        type_before_loss = risk_criterion(pred_type_before, previous_cancer_type_label) * 0.2
+        type_before_loss = ce_criterion(pred_type_before, previous_cancer_type_label) * 0.2
         # print('type_next_loss')
-        type_next_loss = risk_criterion(pred_type_next, next_cancer_type_label) * 0.2
+        type_next_loss = ce_criterion(pred_type_next, next_cancer_type_label) * 0.2
 
         # print('type_next_loss')
-        PCR_loss = risk_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
+        PCR_loss = ce_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
 
         # print('type_next_loss')
-        pT_stage_loss = risk_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
+        pT_stage_loss = ce_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
 
         # print('type_next_loss')
-        pN_stage_loss = risk_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
+        pN_stage_loss = ce_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
 
         # print('type_next_loss')
-        pM_stage_loss = risk_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
+        pM_stage_loss = ce_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
 
         # print('type_next_loss')
-        ER_loss = risk_criterion(pred_ER, previous_cancer_ER_label) * 0.2
+        ER_loss = ce_criterion(pred_ER, previous_cancer_ER_label) * 0.2
 
         # print('type_next_loss')
-        PR_loss = risk_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+        PR_loss = ce_criterion(pred_PR, previous_cancer_PR_label) * 0.2
 
         # print('type_next_loss')
-        Her2_loss = risk_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
+        Her2_loss = ce_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
 
         loss = loss + \
                location_next_loss + location_before_loss + \
@@ -177,7 +177,7 @@ def compute_right_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age
     return loss
 
 
-def compute_left_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age_criterion):
+def compute_left_side_loss_tumor(args, pred, m_label, lens, ce_criterion, l1_criterion):
     # print('compute_left_side_loss')
     # print('pred', pred)
     risk = pred['pred_risk']
@@ -190,10 +190,10 @@ def compute_left_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age_
     years_last_followup = label_filter_220609(
         m_label['years_last_followup'], lens, args.batch_size).long().cuda()
     # print('risk_loss')
-    # risk_loss = risk_criterion(risk, risks_l_label) * 0.5
+    # risk_loss = ce_criterion(risk, risks_l_label) * 0.5
     risk_loss = get_risk_loss_BCE(risk, risks_l_label, years_last_followup) * 0.5
     # print('history_loss')
-    history_loss = risk_criterion(history, history_label) * 0.2
+    history_loss = ce_criterion(history, history_label) * 0.2
 
     loss = risk_loss + history_loss
 
@@ -245,34 +245,34 @@ def compute_left_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age_
             m_label['previous_cancer_Her2_left'], lens, args.batch_size).long().cuda()
 
         # print('location_next_loss')
-        location_next_loss = risk_criterion(location_next, next_cancer_location_label) * 0.2
+        location_next_loss = ce_criterion(location_next, next_cancer_location_label) * 0.2
         # print('location_before_loss')
-        location_before_loss = risk_criterion(location_before, previous_cancer_location_label) * 0.2
+        location_before_loss = ce_criterion(location_before, previous_cancer_location_label) * 0.2
         # print('type_before_loss')
-        type_before_loss = risk_criterion(pred_type_before, previous_cancer_type_label) * 0.2
+        type_before_loss = ce_criterion(pred_type_before, previous_cancer_type_label) * 0.2
         # print('type_next_loss')
-        type_next_loss = risk_criterion(pred_type_next, next_cancer_type_label) * 0.2
+        type_next_loss = ce_criterion(pred_type_next, next_cancer_type_label) * 0.2
 
         # print('type_next_loss')
-        PCR_loss = risk_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
+        PCR_loss = ce_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
 
         # print('type_next_loss')
-        pT_stage_loss = risk_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
+        pT_stage_loss = ce_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
 
         # print('type_next_loss')
-        pN_stage_loss = risk_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
+        pN_stage_loss = ce_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
 
         # print('type_next_loss')
-        pM_stage_loss = risk_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
+        pM_stage_loss = ce_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
 
         # print('type_next_loss')
-        ER_loss = risk_criterion(pred_ER, previous_cancer_ER_label) * 0.2
+        ER_loss = ce_criterion(pred_ER, previous_cancer_ER_label) * 0.2
 
         # print('type_next_loss')
-        PR_loss = risk_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+        PR_loss = ce_criterion(pred_PR, previous_cancer_PR_label) * 0.2
 
         # print('type_next_loss')
-        Her2_loss = risk_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
+        Her2_loss = ce_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
 
         loss = loss + \
                location_next_loss + location_before_loss + \
@@ -283,7 +283,7 @@ def compute_left_side_loss_tumor(args, pred, m_label, lens, risk_criterion, age_
     return loss
 
 
-def compute_exam_based_loss_tumor(args, pred, m_label, lens, risk_criterion, age_criterion):
+def compute_exam_based_loss_tumor(args, pred, m_label, lens, ce_criterion, l1_criterion):
     # print('compute_exam_based_loss')
     risk = pred['pred_risk']
     history = pred['pred_history']
@@ -294,10 +294,10 @@ def compute_exam_based_loss_tumor(args, pred, m_label, lens, risk_criterion, age
     years_last_followup = label_filter_220609(
         m_label['years_last_followup'], lens, args.batch_size).long().cuda()
     # print('risk_loss')
-    # risk_loss = risk_criterion(risk, risk_label) * 0.5
+    # risk_loss = ce_criterion(risk, risk_label) * 0.5
     risk_loss = get_risk_loss_BCE(risk, risk_label, years_last_followup) * 0.5
     # print('history_loss')
-    history_loss = risk_criterion(history, history_label) * 0.2
+    history_loss = ce_criterion(history, history_label) * 0.2
     loss = risk_loss + history_loss
 
     if args.multi_tasks:
@@ -324,13 +324,13 @@ def compute_exam_based_loss_tumor(args, pred, m_label, lens, risk_criterion, age
         age_label = age_label * age_ig_label
 
         # print('birads_loss')
-        birads_loss = risk_criterion(birads, birads_label) * 0.2
+        birads_loss = ce_criterion(birads, birads_label) * 0.2
         # print('density_loss')
-        density_loss = risk_criterion(density, density_label) * 0.2
+        density_loss = ce_criterion(density, density_label) * 0.2
         # print('manufactor_loss')
-        manufactor_loss = risk_criterion(manufactor, manufactor_label) * 0.2
+        manufactor_loss = ce_criterion(manufactor, manufactor_label) * 0.2
         # print('age_loss')
-        age_loss = age_criterion(age, age_label) * 0.002
+        age_loss = l1_criterion(age, age_label) * 0.002
 
         loss = loss + birads_loss + density_loss + age_loss + manufactor_loss
 
@@ -382,30 +382,30 @@ def compute_exam_based_loss_tumor(args, pred, m_label, lens, risk_criterion, age
             m_label['previous_cancer_Her2'], lens, args.batch_size).long().cuda()
 
         # print('position_next_loss')
-        position_next_loss = risk_criterion(position_next, next_cancer_position_label) * 0.2
+        position_next_loss = ce_criterion(position_next, next_cancer_position_label) * 0.2
         # print('position_before_loss')
-        position_before_loss = risk_criterion(position_before, previous_cancer_position_label) * 0.2
+        position_before_loss = ce_criterion(position_before, previous_cancer_position_label) * 0.2
         # print('type_before_loss')
-        type_before_loss = risk_criterion(pred_type_before, previous_cancer_type_label) * 0.2
+        type_before_loss = ce_criterion(pred_type_before, previous_cancer_type_label) * 0.2
         # print('type_next_loss')
-        type_next_loss = risk_criterion(pred_type_next, next_cancer_type_label) * 0.2
+        type_next_loss = ce_criterion(pred_type_next, next_cancer_type_label) * 0.2
 
-        location_before_loss = risk_criterion(location_before, previous_cancer_location_label) * 0.2
-        location_next_loss = risk_criterion(location_next, next_cancer_location_label) * 0.2
+        location_before_loss = ce_criterion(location_before, previous_cancer_location_label) * 0.2
+        location_next_loss = ce_criterion(location_next, next_cancer_location_label) * 0.2
         # print('type_next_loss')
-        PCR_loss = risk_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
+        PCR_loss = ce_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
         # print('type_next_loss')
-        pT_stage_loss = risk_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
+        pT_stage_loss = ce_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
         # print('type_next_loss')
-        pN_stage_loss = risk_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
+        pN_stage_loss = ce_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
         # print('type_next_loss')
-        pM_stage_loss = risk_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
+        pM_stage_loss = ce_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
         # print('type_next_loss')
-        ER_loss = risk_criterion(pred_ER, previous_cancer_ER_label) * 0.2
+        ER_loss = ce_criterion(pred_ER, previous_cancer_ER_label) * 0.2
         # print('type_next_loss')
-        PR_loss = risk_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+        PR_loss = ce_criterion(pred_PR, previous_cancer_PR_label) * 0.2
         # print('type_next_loss')
-        Her2_loss = risk_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
+        Her2_loss = ce_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
 
         loss = loss + position_next_loss + position_before_loss + type_before_loss + \
                type_next_loss + location_before_loss + \
@@ -415,17 +415,17 @@ def compute_exam_based_loss_tumor(args, pred, m_label, lens, risk_criterion, age
     return loss
 
 
-def compute_final_loss_tumor_0614_(args, pred, label, risk_criterion, age_criterion):
+def compute_final_loss_tumor_0614_(args, pred, label, ce_criterion, l1_criterion):
     risk = pred['pred_risk']
     history = pred['pred_history']
     risk_label = label['risks'].cuda()
     history_label = label['history'].cuda()
     years_last_followup = label['years_last_followup'].cuda()
     # print('risk_loss')
-    # risk_loss = risk_criterion(risk, risk_label)
+    # risk_loss = ce_criterion(risk, risk_label)
     risk_loss = get_risk_loss_BCE(risk, risk_label, years_last_followup)
     # print('history_loss')
-    history_loss = risk_criterion(history, history_label) * 0.2
+    history_loss = ce_criterion(history, history_label) * 0.2
     loss = risk_loss + history_loss
 
     if args.multi_tasks:
@@ -444,11 +444,11 @@ def compute_final_loss_tumor_0614_(args, pred, label, risk_criterion, age_criter
         age = age * age_ig_label
         age_label = age_label * age_ig_label
         # print('birads_loss')
-        birads_loss = risk_criterion(birads, birads_label) * 0.2
+        birads_loss = ce_criterion(birads, birads_label) * 0.2
         # print('density_loss')
-        density_loss = risk_criterion(density, density_label) * 0.2
+        density_loss = ce_criterion(density, density_label) * 0.2
         # print('age_loss')
-        age_loss = age_criterion(age, age_label) * 0.002
+        age_loss = l1_criterion(age, age_label) * 0.002
         loss = loss + birads_loss + density_loss + age_loss
 
     if args.use_risk_factors:
@@ -474,33 +474,33 @@ def compute_final_loss_tumor_0614_(args, pred, label, risk_criterion, age_criter
         # previous_cancer_Her2_label = label['previous_cancer_Her2'].cuda()
 
         # print('position_next_loss')
-        position_next_loss = risk_criterion(position_next, next_cancer_position_label) * 0.5
+        position_next_loss = ce_criterion(position_next, next_cancer_position_label) * 0.5
         # print('position_before_loss')
-        position_before_loss = risk_criterion(position_before, previous_cancer_position_label) * 0.2
+        position_before_loss = ce_criterion(position_before, previous_cancer_position_label) * 0.2
         # print('type_before_loss')
-        type_before_loss = risk_criterion(pred_type_before, previous_cancer_type_label) * 0.2
+        type_before_loss = ce_criterion(pred_type_before, previous_cancer_type_label) * 0.2
         # print('type_next_loss')
-        type_next_loss = risk_criterion(pred_type_next, next_cancer_type_label) * 0.2
+        type_next_loss = ce_criterion(pred_type_next, next_cancer_type_label) * 0.2
 
-        # location_before_loss = risk_criterion(location_before, previous_cancer_location_label) * 0.2
-        location_next_loss = risk_criterion(location_next, next_cancer_location_label) * 0.2
+        # location_before_loss = ce_criterion(location_before, previous_cancer_location_label) * 0.2
+        location_next_loss = ce_criterion(location_next, next_cancer_location_label) * 0.2
         # print('type_next_loss')
-        # PCR_loss = risk_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
+        # PCR_loss = ce_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
         # print('type_next_loss')
-        # pT_stage_loss = risk_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
+        # pT_stage_loss = ce_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
         # print('type_next_loss')
-        # pN_stage_loss = risk_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
+        # pN_stage_loss = ce_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
         # print('type_next_loss')
-        # pM_stage_loss = risk_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
-
-        # print('type_next_loss')
-        # ER_loss = risk_criterion(pred_ER, previous_cancer_ER_label) * 0.2
+        # pM_stage_loss = ce_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
 
         # print('type_next_loss')
-        # PR_loss = risk_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+        # ER_loss = ce_criterion(pred_ER, previous_cancer_ER_label) * 0.2
 
         # print('type_next_loss')
-        # Her2_loss = risk_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
+        # PR_loss = ce_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+
+        # print('type_next_loss')
+        # Her2_loss = ce_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
 
         loss = loss + position_next_loss + position_before_loss + type_before_loss + \
                type_next_loss + location_next_loss
@@ -508,7 +508,7 @@ def compute_final_loss_tumor_0614_(args, pred, label, risk_criterion, age_criter
     return loss
 
 
-def compute_final_loss_tumor_side_specific(args, pred, label, risk_criterion, age_criterion):
+def compute_final_loss_tumor_side_specific(args, pred, label, ce_criterion, l1_criterion):
     risk = pred['pred_risk']
     risk_r = pred['pred_risk_r']
     risk_l = pred['pred_risk_l']
@@ -520,15 +520,15 @@ def compute_final_loss_tumor_side_specific(args, pred, label, risk_criterion, ag
     history_label = label['history'].cuda()
     years_last_followup = label['years_last_followup'].cuda()
     # print('risk_loss')
-    # risk_loss = risk_criterion(risk, risk_label)
-    # risk_r_loss = risk_criterion(risk_r, risk_r_label) * 0.1
-    # risk_l_loss = risk_criterion(risk_l, risk_l_label) * 0.1
+    # risk_loss = ce_criterion(risk, risk_label)
+    # risk_r_loss = ce_criterion(risk_r, risk_r_label) * 0.1
+    # risk_l_loss = ce_criterion(risk_l, risk_l_label) * 0.1
 
     risk_loss =get_risk_loss_BCE(risk, risk_label, years_last_followup)
     risk_r_loss =get_risk_loss_BCE(risk_r, risk_r_label, years_last_followup) * 0.1
     risk_l_loss = get_risk_loss_BCE(risk_l, risk_l_label, years_last_followup) * 0.1
     # print('history_loss')
-    history_loss = risk_criterion(history, history_label) * 0.2
+    history_loss = ce_criterion(history, history_label) * 0.2
     loss = risk_loss + history_loss + risk_r_loss + risk_l_loss
 
     if args.multi_tasks:
@@ -547,11 +547,11 @@ def compute_final_loss_tumor_side_specific(args, pred, label, risk_criterion, ag
         age = age * age_ig_label
         age_label = age_label * age_ig_label
         # print('birads_loss')
-        birads_loss = risk_criterion(birads, birads_label) * 0.2
+        birads_loss = ce_criterion(birads, birads_label) * 0.2
         # print('density_loss')
-        density_loss = risk_criterion(density, density_label) * 0.2
+        density_loss = ce_criterion(density, density_label) * 0.2
         # print('age_loss')
-        age_loss = age_criterion(age, age_label) * 0.002
+        age_loss = l1_criterion(age, age_label) * 0.002
         loss = loss + birads_loss + density_loss + age_loss
 
     if args.use_risk_factors:
@@ -588,37 +588,37 @@ def compute_final_loss_tumor_side_specific(args, pred, label, risk_criterion, ag
         # previous_cancer_Her2_label = label['previous_cancer_Her2'].cuda()
 
         # print('position_next_loss')
-        position_next_loss = risk_criterion(position_next, next_cancer_position_label) * 0.5
+        position_next_loss = ce_criterion(position_next, next_cancer_position_label) * 0.5
         # print('position_before_loss')
-        position_before_loss = risk_criterion(position_before, previous_cancer_position_label) * 0.2
+        position_before_loss = ce_criterion(position_before, previous_cancer_position_label) * 0.2
         # print('type_before_loss')
-        type_before_loss = risk_criterion(pred_type_before, previous_cancer_type_label) * 0.2
+        type_before_loss = ce_criterion(pred_type_before, previous_cancer_type_label) * 0.2
         # print('type_next_loss')
-        type_next_loss = risk_criterion(pred_type_next, next_cancer_type_label) * 0.2
-        type_next_loss_r = risk_criterion(pred_type_next_r, next_cancer_type_r_label) * 0.2
-        type_next_loss_l = risk_criterion(pred_type_next_l, next_cancer_type_l_label) * 0.2
+        type_next_loss = ce_criterion(pred_type_next, next_cancer_type_label) * 0.2
+        type_next_loss_r = ce_criterion(pred_type_next_r, next_cancer_type_r_label) * 0.2
+        type_next_loss_l = ce_criterion(pred_type_next_l, next_cancer_type_l_label) * 0.2
 
-        # location_before_loss = risk_criterion(location_before, previous_cancer_location_label) * 0.2
-        location_next_loss = risk_criterion(location_next, next_cancer_location_label) * 0.2
-        location_next_loss_r = risk_criterion(location_next_r, next_cancer_location_r_label) * 0.2
-        location_next_loss_l = risk_criterion(location_next_l, next_cancer_location_l_label) * 0.2
+        # location_before_loss = ce_criterion(location_before, previous_cancer_location_label) * 0.2
+        location_next_loss = ce_criterion(location_next, next_cancer_location_label) * 0.2
+        location_next_loss_r = ce_criterion(location_next_r, next_cancer_location_r_label) * 0.2
+        location_next_loss_l = ce_criterion(location_next_l, next_cancer_location_l_label) * 0.2
         # print('type_next_loss')
-        # PCR_loss = risk_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
+        # PCR_loss = ce_criterion(pred_PCR, previous_cancer_PCR_label) * 0.2
         # print('type_next_loss')
-        # pT_stage_loss = risk_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
+        # pT_stage_loss = ce_criterion(pred_pT_stage, previous_cancer_pT_stage_label) * 0.2
         # print('type_next_loss')
-        # pN_stage_loss = risk_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
+        # pN_stage_loss = ce_criterion(pred_pN_stage, previous_cancer_pN_stage_label) * 0.2
         # print('type_next_loss')
-        # pM_stage_loss = risk_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
-
-        # print('type_next_loss')
-        # ER_loss = risk_criterion(pred_ER, previous_cancer_ER_label) * 0.2
+        # pM_stage_loss = ce_criterion(pred_pM_stage, previous_cancer_pM_stage_label) * 0.2
 
         # print('type_next_loss')
-        # PR_loss = risk_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+        # ER_loss = ce_criterion(pred_ER, previous_cancer_ER_label) * 0.2
 
         # print('type_next_loss')
-        # Her2_loss = risk_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
+        # PR_loss = ce_criterion(pred_PR, previous_cancer_PR_label) * 0.2
+
+        # print('type_next_loss')
+        # Her2_loss = ce_criterion(pred_Her2, previous_cancer_Her2_label) * 0.2
 
         loss = loss + position_next_loss + position_before_loss + type_before_loss + \
                type_next_loss + type_next_loss_r + type_next_loss_l + \
@@ -632,8 +632,8 @@ def train_4views_mtp_220613(model, data_loader, criterion, optimizer, epoch, arg
     model.train()
     adjust_learning_rate(optimizer, epoch, args)
     total_loss, total_top1, total_num, train_bar = 0.0, 0.0, 0, tqdm(data_loader)
-    risk_criterion = criterion['risk_criterion']
-    age_criterion = criterion['age_criterion']
+    ce_criterion = criterion['ce_criterion']
+    l1_criterion = criterion['l1_criterion']
     for input in train_bar:
         imgs = input['imgs'].cuda()
         times = input['times'].cuda()
@@ -675,19 +675,19 @@ def train_4views_mtp_220613(model, data_loader, criterion, optimizer, epoch, arg
 
         pred_risk_label = pred['pred_risk']
         right_side_based_loss = compute_right_side_loss_tumor(args, pred['right_side_based_pred'], m_labels, lens,
-                                                              risk_criterion, age_criterion)
+                                                              ce_criterion, l1_criterion)
 
         left_side_based_loss = compute_left_side_loss_tumor(args, pred['left_side_based_pred'], m_labels, lens,
-                                                            risk_criterion, age_criterion)
+                                                            ce_criterion, l1_criterion)
 
         exam_based_loss = compute_exam_based_loss_tumor(args, pred['exam_based_pred'], m_labels, lens,
-                                                        risk_criterion, age_criterion)
+                                                        ce_criterion, l1_criterion)
         if 'side_specific' in args.method:
             final_loss = compute_final_loss_tumor_side_specific(
-                args, pred['final_pred'], labels, risk_criterion, age_criterion)
+                args, pred['final_pred'], labels, ce_criterion, l1_criterion)
         else:
             final_loss = compute_final_loss_tumor_0614_(
-                args, pred['final_pred'], labels, risk_criterion, age_criterion)
+                args, pred['final_pred'], labels, ce_criterion, l1_criterion)
         loss = right_side_based_loss + left_side_based_loss + exam_based_loss + final_loss
 
         optimizer.zero_grad()
@@ -732,8 +732,8 @@ def validate_4views_mtp_220613(model, valid_loader, criterion, args, poltroc=Fal
     total_loss, risk_total_top1, total_num_patient = 0.0, 0.0, 0
     all_risk_probabilities, all_risk_predicted, all_risk_label = [], [], []
     all_followups = []
-    risk_criterion = criterion['risk_criterion']
-    age_criterion = criterion['age_criterion']
+    ce_criterion = criterion['ce_criterion']
+    l1_criterion = criterion['l1_criterion']
 
     with torch.no_grad():
         valid_bar = tqdm(valid_loader)
@@ -781,23 +781,23 @@ def validate_4views_mtp_220613(model, valid_loader, criterion, args, poltroc=Fal
             pred_risk_label = pred['pred_risk']
             right_side_based_loss = compute_right_side_loss_tumor(args,
                                                                   pred['right_side_based_pred'], m_labels, lens,
-                                                                  risk_criterion,
-                                                                  age_criterion)
+                                                                  ce_criterion,
+                                                                  l1_criterion)
 
             left_side_based_loss = compute_left_side_loss_tumor(args,
                                                                 pred['left_side_based_pred'], m_labels, lens,
-                                                                risk_criterion,
-                                                                age_criterion)
+                                                                ce_criterion,
+                                                                l1_criterion)
 
             exam_based_loss = compute_exam_based_loss_tumor(args,
-                                                            pred['exam_based_pred'], m_labels, lens, risk_criterion,
-                                                            age_criterion)
+                                                            pred['exam_based_pred'], m_labels, lens, ce_criterion,
+                                                            l1_criterion)
             if 'side_specific' in args.method:
                 final_loss = compute_final_loss_tumor_side_specific(
-                    args, pred['final_pred'], labels, risk_criterion, age_criterion)
+                    args, pred['final_pred'], labels, ce_criterion, l1_criterion)
             else:
                 final_loss = compute_final_loss_tumor_0614_(
-                    args, pred['final_pred'], labels, risk_criterion, age_criterion)
+                    args, pred['final_pred'], labels, ce_criterion, l1_criterion)
             loss = right_side_based_loss + left_side_based_loss + exam_based_loss + final_loss
 
             total_loss += loss.item() * valid_loader.batch_size
@@ -874,8 +874,8 @@ def test_4views_mtp_220613(model, test_loader, criterion, args, poltroc=False, n
     model.eval()
     total_loss, risk_total_top1, total_num_patient = 0.0, 0.0, 0
     all_risk_probabilities, all_risk_predicted, all_risk_label = [], [], []
-    risk_criterion = criterion['risk_criterion']
-    age_criterion = criterion['age_criterion']
+    ce_criterion = criterion['ce_criterion']
+    l1_criterion = criterion['l1_criterion']
     all_followups = []
 
     save_dict = {
@@ -948,22 +948,22 @@ def test_4views_mtp_220613(model, test_loader, criterion, args, poltroc=False, n
             pred_risk_label = pred['pred_risk']
             right_side_based_loss = compute_right_side_loss_tumor(args,
                                                             pred['right_side_based_pred'], m_labels, lens,
-                                                            risk_criterion,
-                                                            age_criterion)
+                                                            ce_criterion,
+                                                            l1_criterion)
 
             left_side_based_loss = compute_left_side_loss_tumor(args,
-                                                          pred['left_side_based_pred'], m_labels, lens, risk_criterion,
-                                                          age_criterion)
+                                                          pred['left_side_based_pred'], m_labels, lens, ce_criterion,
+                                                          l1_criterion)
 
             exam_based_loss = compute_exam_based_loss_tumor(args,
-                                                      pred['exam_based_pred'], m_labels, lens, risk_criterion,
-                                                      age_criterion)
+                                                      pred['exam_based_pred'], m_labels, lens, ce_criterion,
+                                                      l1_criterion)
             if 'side_specific'in args.method:
                 final_loss = compute_final_loss_tumor_side_specific(
-                    args, pred['final_pred'], labels, risk_criterion, age_criterion)
+                    args, pred['final_pred'], labels, ce_criterion, l1_criterion)
             else:
                 final_loss = compute_final_loss_tumor_0614_(
-                    args, pred['final_pred'], labels, risk_criterion, age_criterion)
+                    args, pred['final_pred'], labels, ce_criterion, l1_criterion)
 
             loss = right_side_based_loss + left_side_based_loss + exam_based_loss + final_loss
             # loss = exam_based_loss + final_loss + right_side_based_loss
