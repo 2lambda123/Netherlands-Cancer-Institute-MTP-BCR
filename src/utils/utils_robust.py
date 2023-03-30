@@ -11,7 +11,9 @@ from lifelines import KaplanMeierFitter
 import seaborn as sns
 from .c_index import concordance_index
 
+
 def imgunit8(img):
+    # min-max normalization & covert to unit8
     # mammogram_dicom = img
     # orig_min = mammogram_dicom.min()
     # orig_max = mammogram_dicom.max()
@@ -26,15 +28,16 @@ def imgunit8(img):
 
 
 def imgunit16(img):
+    # min-max normalization & covert to unit16
     mammogram_dicom = img
     orig_min = mammogram_dicom.min()
     orig_max = mammogram_dicom.max()
     target_min = 0.0
     target_max = 65535.0
-    mammogram_scaled = (mammogram_dicom-orig_min)*((target_max-
-    target_min)/(orig_max-orig_min))+target_min
+    mammogram_scaled = (mammogram_dicom-orig_min)*((target_max-target_min)/(orig_max-orig_min))+target_min
     mammogram_uint8_by_function = mammogram_scaled.astype(np.uint16)
     return mammogram_uint8_by_function
+
 
 def split_data_id(data_info, split_ratio):
     split_ratio = split_ratio
@@ -60,6 +63,7 @@ def comput_cm(all_labels, all_predicted):
     y_pred = y_pred.reshape(-1, 1)
     cm = metrics.confusion_matrix(y_true, y_pred)
     return cm
+
 
 def get_y_ture_pred(all_labels, all_predicted):
     y_true = all_labels
@@ -94,6 +98,7 @@ def sanity_check(state_dict, pretrained_weights):
 
     print("=> sanity check passed.")
 
+
 def prob_to_score(prob, max_followup=5):
     # print('prob')
     # for i in range(15):
@@ -105,6 +110,7 @@ def prob_to_score(prob, max_followup=5):
             i_ = -(i_in + 1)
             score[:, i] += prob[:, i_]
     return score
+
 
 def get_censor_info(labels, followups, num_classes=6 ,max_followup=5):
     labels = np.squeeze(labels)
@@ -197,7 +203,7 @@ def compute_auc_x_year_auc(probs, censor_times, golds, followup):
     return auc, golds_for_eval
 
 
-def comput_yala_metrics(args, all_labels_np, all_probabilities_np, all_followups_np):
+def compute_metrics(args, all_labels_np, all_probabilities_np, all_followups_np):
     max_followup = args.test_num_classes - 1
     # all_followups_np = np.ones_like(all_labels_np) * (max_followup + 1)
     score = prob_to_score(all_probabilities_np, max_followup=max_followup)
@@ -239,8 +245,8 @@ def polt_roc_curve(args, all_labels, all_probabilities, all_followups, poltroc=F
     # all_probabilities_np = all_probabilities_np[:, 1]
     all_followups_np = all_followups_np.reshape(-1, 1) + 1
 
-    # # -------- use yala's code to compute c-index and auc for checking -------- # #
-    metrics = comput_yala_metrics(args, all_labels_np, all_probabilities_np, all_followups_np)
+    # # -------- use codes of mirai to compute c-index and auc for checking -------- # #
+    metrics = compute_metrics(args, all_labels_np, all_probabilities_np, all_followups_np)
     # # -------- ------------------------------------------------------- -------- # #
 
     roc_auc_overall = []
@@ -358,7 +364,7 @@ def polt_roc_curve_with_CI(args, all_labels, all_probabilities, all_followups, p
         all_probabilities_np_bs, all_labels_np_bs, all_followups_np_bs = resample(
             all_probabilities_np, all_labels_np, all_followups_np, replace=True, random_state=i
         )
-        metrics_ = comput_yala_metrics(args, all_labels_np_bs, all_probabilities_np_bs, all_followups_np_bs)
+        metrics_ = compute_metrics(args, all_labels_np_bs, all_probabilities_np_bs, all_followups_np_bs)
         c_index = metrics_['c_index']
         decile_recall = metrics_['decile_recall']
         c_index_bs.append(c_index)
@@ -422,7 +428,7 @@ def polt_roc_curve_with_CI(args, all_labels, all_probabilities, all_followups, p
     roc_auc_overall = []
 
     # # -------- use yala's code to compute c-index and auc for checking -------- # #
-    metrics = comput_yala_metrics(args, all_labels_np, all_probabilities_np, all_followups_np)
+    metrics = compute_metrics(args, all_labels_np, all_probabilities_np, all_followups_np)
     # # -------- ------------------------------------------------------- -------- # #
 
     for n in range(num_classes - 1):
