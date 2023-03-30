@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from dataset.data_loader import risk_dataloador
 from datetime import datetime
-from utils.utils_robust import save_checkpoint
+from utils.utils_robust_custom import save_checkpoint
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 def arg_parse():
@@ -46,17 +46,18 @@ def arg_parse():
     parser.add_argument('--image-dir', default='', type=str, metavar='PATH',
                         help='path to image data (default: none)')
     parser.add_argument('--num-classes', default='6', type=int, metavar='N',
-                        help='number of classes when training')
+                        help='(number of classes) predicting BC risk of when training')
     parser.add_argument('--years_of_history', default='21', type=int, metavar='N',
-                        help='for predicting history of previous tumor')
+                        help='predicting history of previous tumor')
     parser.add_argument('--test-num-classes', default='6', type=int, metavar='N',
-                        help='number of classes')
+                        help='(number of classes) predicting BC risk of when test')
     parser.add_argument('--num-workers', default='16', type=int, metavar='N',
                         help='number of data loading workers (default: 16)')
-    parser.add_argument('--img-size', default=(1024, 512),
-                        help='size of images')
-    parser.add_argument('--method', default='side_specific_4views_mtp_tumor',
-                        help='three method now: 4views_mtp_tumor, side_specific_4views_mtp_tumor')
+    parser.add_argument('--img-size', type=int, nargs='+', default=[1024, 512],
+                        help='height and width of image in pixels. [default: [256,256]')
+    parser.add_argument('--method',
+                        default='side_specific_4views_mtp_tumor',
+                        help='4views_mtp_tumor, side_specific_4views_mtp_tumor')
     parser.add_argument('--dataset', default='inhouse',
                         help='inhouse or custom dataset')
     parser.add_argument('--name', default='', type=str,
@@ -115,7 +116,10 @@ def arg_parse():
                         default="last_timestep",
                         # default="sum",
     )
-    parser.add_argument("--image_shape", default=(1, 1))
+    parser.add_argument("--image_shape", default=(1, 1),
+                        help='image shape before input to transformer, '
+                             'we set (1,1) as it is already pooled after the encoder for reducing computational consumption'
+                        )
 
     parser.add_argument('--num_time_points', default=6, type=int, metavar='N',
                         help=' num of time points of exam will be input')
@@ -199,10 +203,16 @@ def main():
 
     if args.method == '4views_mtp_tumor' or args.method == 'side_specific_4views_mtp_tumor':
         from learning_demo.mtpbcr_task_specific_BCE_demo import get_train_val_test_demo
-        from dataset.inhouse_MTP_dataset import inhouse_Dataset
         from models.mtpbcr_model import MTP_BCR_Model as risk_model
     else:
         raise ValueError(f" Method: {args.method} is not supported.")
+
+    if args.dataset == 'inhouse':
+        from dataset.inhouse_MTP_dataset import inhouse_Dataset
+    elif args.dataset == 'custom':
+        raise ValueError(" Custom dataset is not supported for training yet.")
+    else:
+        raise ValueError(f" dataset: {args.dataset} is not supported.")
 
     train, validate, test = get_train_val_test_demo(args.method)
 

@@ -19,7 +19,7 @@ from torchvision import transforms
 from scipy.ndimage.filters import gaussian_filter
 from scipy.ndimage.interpolation import map_coordinates
 import matplotlib.pyplot as plt
-from ..utils.utils_robust import imgunit8
+from ..utils.utils_robust_custom import imgunit8
 # from sklearn.model_selection import KFold, train_test_split
 
 
