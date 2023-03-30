@@ -9,20 +9,20 @@ Who and where will get breast cancer within ten years? The question can be answe
 
 ### Training
 ```
-python train.py
+python src/train.py
 ```
 
-### Test
+### Predicting on Custom Dataset 
 ```
-python test.py
+python src/custom_predict.py
 ```
 
-### Result analysis
+### Result analysis (will update soon)
 ```
 python xxxxx.py
 ```
 
-The configs above are meant to specify exact implementation details and our experimental procedure
+[//]: # (The configs above are meant to specify exact implementation details and our experimental procedure)
 
 ## Disclaimer
 

@@ -66,11 +66,11 @@ def data_info_clean(data_info, agrs):
         data_info = data_info[data_info['clinical_group'] == 'screening']
 
     if agrs.birads_clean:
-        data_info['birads'][data_info['birads'].isna()] = -1
+        # data_info['birads'][data_info['birads'].isna()] = -1
         data_info = data_info[(data_info['birads'] == 0)
                               | (data_info['birads'] == 1)
-                              | (data_info['birads'] == 2)
-                              | (data_info['birads'] == -1)]
+                              | (data_info['birads'] == 2)]
+                              # | (data_info['birads'] == -1)]
 
 
     if agrs.years_at_least_followup != 0:
@@ -98,30 +98,6 @@ def data_info_clean_hist(data_info, agrs):
                               & (data_info['PATH_R_CC_processed'] != 'none')
                               & (data_info['PATH_L_MLO_processed'] != 'none')
                               & (data_info['PATH_R_MLO_processed'] != 'none')]
-
-    # if agrs.biopsy_clean:
-    #     data_info['birads'][data_info['birads'].isna()] = -1
-    #     data_info['clinical_group'] = 'screening'
-    #     data_info['next_cancer_date'][data_info['next_cancer_date'].isna()] = 'none'
-    #     for i in range(len(data_info)):
-    #         diagnosis_date = data_info['next_cancer_date'].iloc[i]
-    #         if diagnosis_date != 'none' and data_info["birads"].iloc[i] != 1 and \
-    #                 data_info["birads"].iloc[i] != 2:
-    #             diagnosis_date_ = datetime.datetime.strptime(str(diagnosis_date), '%Y/%m/%d')
-    #             case_exam_data = data_info['exam_date'].iloc[i]
-    #             case_exam_data_ = datetime.datetime.strptime(str(case_exam_data), '%Y/%m/%d')
-    #             gap = round((diagnosis_date_ - case_exam_data_).days)
-    #             if gap <= 90:
-    #                 data_info['clinical_group'].iloc[i] = 'diagnosis'
-    #     data_info = data_info[data_info['clinical_group'] == 'screening']
-    #
-    # if agrs.birads_clean:
-    #     data_info['birads'][data_info['birads'].isna()] = -1
-    #     data_info = data_info[(data_info['birads'] == 0)
-    #                           | (data_info['birads'] == 1)
-    #                           | (data_info['birads'] == 2)
-    #                           | (data_info['birads'] == -1)]
-
 
     if agrs.years_at_least_followup != 0:
         x = agrs.years_at_least_followup
