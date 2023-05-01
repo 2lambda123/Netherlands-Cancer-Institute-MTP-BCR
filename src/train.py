@@ -16,7 +16,7 @@ from utils.utils_robust_custom import save_checkpoint
 def arg_parse():
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-a', '--arch', default='resnet18',
-                        help='only support resnet18 now')
+                        help='only support resnet18 as the backbone now')
     parser.add_argument('--optimizer', default='Adam', type=str,
                         help='optimizer')
     parser.add_argument('--lr', '--learning-rate', default=0.0001, type=float, metavar='LR',
@@ -37,8 +37,6 @@ def arg_parse():
                         help='manual epoch number (useful on restarts)')
     parser.add_argument('--resume', default='', type=str, metavar='PATH',
                         help='path to latest checkpoint (default: none)')
-    parser.add_argument('--pretrained',  default='', type=str,
-                        help='path to moco pretrained checkpoint')
     parser.add_argument('--results-dir', default='./log/Mammo_risk/', type=str, metavar='PATH',
                         help='path to cache (default: none)')
     parser.add_argument('--csv-dir', default='', type=str, metavar='PATH',
@@ -131,7 +129,7 @@ def arg_parse():
     # ---------------------------------
     parser.add_argument('--use_risk_factors', action='store_true',
                         # default=True,
-                        help='weather balance label')
+                        help='weather use risk factors')
 
     parser.add_argument('--multi_tasks', action='store_true',
                         # default=True,
