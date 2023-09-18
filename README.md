@@ -1,19 +1,5 @@
 # MTP-BCR: Predicting up to 10 year breast cancer risk using longitudinal mammographic screening history
 
-Risk assessment of breast cancer (BC) seeks to enhance individualized screening and prevention strategies. 
-BC risk informs healthy individuals of the short- and long-term likelihood of cancer development, 
-also enabling detection of existing BC. 
-We present a temporospatial and explainable deep learning risk model, 
-the **Multi-Time Point Breast Cancer Risk Model (MTP-BCR)**, 
-which learns from longitudinal mammography data to identify subtle changes in breast tissue 
-that may signal future malignancy. Utilizing a large in-house dataset of 171,168 screening mammograms 
-from 42,792 consecutive exams involving 9,133 women, 
-our model demonstrates a significant improvement in long-term (10-year) risk prediction 
-with an area under the receiver operating characteristics (AUC) of 0.80. Furthermore, 
-MTP-BCR provides unilateral breast-level predictions, achieving AUCs up to 0.81 and 0.77 for 5-year risk 
-and 10-year risk assessments, respectively.
-
-![ROC figures](figures/result.svg)
 
 ## Usage
 ### Environment
