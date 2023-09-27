@@ -8,11 +8,6 @@ conda env create -f py37_environment.yml
 conda activate py37
 ```
 
-### Pareper your dataset (coming soon):
-```
-xxxxxxxx  # pred to csv
-```
-
 ### Example training:
 ```bash
 python src/train.py \
@@ -30,11 +25,6 @@ python src/train.py \
 
 The configs above are meant to specify exact implementation details and our experimental procedure
 
-### Example Result analysis
-```
-python result_anaysis/xxxxx.py  # pred to csv
-python result_anaysis/xxxxx.py  # calculate AUC with CI and plot ROCs
-```
 
 
 
